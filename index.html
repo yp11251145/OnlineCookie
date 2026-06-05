@@ -13,6 +13,8 @@ header{background:#8b5e3c;color:white;padding:15px;text-align:center}
 button{background:#8b5e3c;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
 input{width:100%;padding:8px;margin:5px 0}
 #cartItems div{margin:8px 0}
+/* Added styling to make sure images fit beautifully in the cards */
+.product-img{width:100%;height:150px;object-fit:cover;border-radius:6px;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -81,19 +83,22 @@ const db=getFirestore(app);
 
 emailjs.init("yZkeLriePU-BYo2WG");
 
+// Added image URLs here
 const products=[
-{name:"Chocolate Chip Cookie",price:25},
-{name:"Double Chocolate Cookie",price:30},
-{name:"Matcha Cookie",price:35},
-{name:"Red Velvet Cookie",price:35}
+{name:"Chocolate Chip Cookie",price:25,image:"https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop&q=60"},
+{name:"Double Chocolate Cookie",price:30,image:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop&q=60"},
+{name:"Matcha Cookie",price:35,image:"https://images.unsplash.com/photo-1536680465769-a36969fa7d41?w=500&auto=format&fit=crop&q=60"},
+{name:"Red Velvet Cookie",price:35,image:"https://images.unsplash.com/photo-1618923850107-d1a234d7a73a?w=500&auto=format&fit=crop&q=60"}
 ];
 
 let cart=[];
 
+// Updated rendering to include the img tag
 const productsDiv=document.getElementById("products");
 products.forEach(p=>{
 productsDiv.innerHTML+=`
 <div class="card">
+<img src="${p.image}" alt="${p.name}" class="product-img">
 <h3>${p.name}</h3>
 <p>$${p.price}</p>
 <button onclick="addToCart('${p.name}',${p.price})">Add To Cart</button>
