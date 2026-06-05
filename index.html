@@ -3,217 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Store</title>
-
+<title>Cookie Store</title>
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, sans-serif;
-}
-
-body{
-    background:#f4f6f9;
-}
-
-header{
-    background:#2563eb;
-    color:white;
-    padding:20px;
-    text-align:center;
-}
-
-.container{
-    width:90%;
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
-    margin-bottom:20px;
-}
-
-h2{
-    margin-bottom:15px;
-    color:#2563eb;
-}
-
-input, textarea, select{
-    width:100%;
-    padding:10px;
-    margin:8px 0;
-    border:1px solid #ddd;
-    border-radius:5px;
-}
-
-button{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:10px 15px;
-    border-radius:5px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-.product-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
-}
-
-.product{
-    background:white;
-    border-radius:10px;
-    padding:15px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
-    text-align:center;
-}
-
-.product img{
-    width:100%;
-    height:180px;
-    object-fit:cover;
-    border-radius:8px;
-}
-
-.price{
-    color:green;
-    font-size:20px;
-    font-weight:bold;
-}
-
-.hidden{
-    display:none;
-}
-
-.order-item{
-    border-bottom:1px solid #ddd;
-    padding:10px 0;
-}
-
-.status{
-    margin-top:10px;
-    font-weight:bold;
-    color:green;
-}
-
-.user-info{
-    margin-bottom:15px;
-    color:#333;
-}
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#8b5e3c;color:white;padding:15px;text-align:center}
+.container{max-width:1200px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.card{background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+button{background:#8b5e3c;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+input{width:100%;padding:8px;margin:5px 0}
+#cartItems div{margin:8px 0}
 </style>
 </head>
 <body>
-
-<header>
-    <h1>🍪 Cookie Store</h1>
-    <p>Simple Full-Stack Store with Authentication & Orders</p>
-</header>
-
+<header><h1>🍪 Cookie Store</h1></header>
 <div class="container">
 
-    <!-- USER INFO -->
-    <div class="card">
-        <div id="userInfo" class="user-info">
-            Not Logged In
-        </div>
+<div class="card">
+<h2>Signup</h2>
+<input id="signupEmail" placeholder="Email">
+<input id="signupPassword" type="password" placeholder="Password">
+<button onclick="signup()">Signup</button>
 
-        <button id="logoutBtn" class="hidden">Logout</button>
-    </div>
+<h2>Login</h2>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<button onclick="logout()">Logout</button>
+<p id="userInfo">Not logged in</p>
+</div>
 
-    <!-- PRODUCTS -->
-    <div class="card">
-        <h2>Products</h2>
+<h2>Products</h2>
+<div class="grid" id="products"></div>
 
-        <div class="product-grid" id="productGrid"></div>
-    </div>
+<div class="card">
+<h2>Cart</h2>
+<div id="cartItems"></div>
+<h3>Total: $<span id="total">0</span></h3>
+</div>
 
-    <!-- SIGNUP -->
-    <div class="card">
-        <h2>Signup</h2>
+<div class="card">
+<h2>Checkout</h2>
+<input id="customerName" placeholder="Name">
+<input id="customerEmail" placeholder="Email">
+<input id="customerAddress" placeholder="Address">
+<input id="customerPhone" placeholder="Phone">
+<button onclick="checkout()">Place Order</button>
+</div>
 
-        <input type="email" id="signupEmail" placeholder="Email">
-        <input type="password" id="signupPassword" placeholder="Password">
-
-        <button onclick="signup()">Create Account</button>
-    </div>
-
-    <!-- LOGIN -->
-    <div class="card">
-        <h2>Login</h2>
-
-        <input type="email" id="loginEmail" placeholder="Email">
-        <input type="password" id="loginPassword" placeholder="Password">
-
-        <button onclick="login()">Login</button>
-    </div>
-
-    <!-- ORDER FORM -->
-    <div class="card">
-        <h2>Place Order</h2>
-
-        <input type="text" id="customerName" placeholder="Customer Name">
-
-        <select id="productSelect"></select>
-
-        <input type="number" id="quantity" value="1" min="1">
-
-        <textarea id="message" placeholder="Message"></textarea>
-
-        <button onclick="placeOrder()">Submit Order</button>
-
-        <div class="status" id="orderStatus"></div>
-    </div>
-
-    <!-- ORDER HISTORY -->
-    <div class="card">
-        <h2>My Order History</h2>
-
-        <div id="orderHistory">
-            Login to view your orders.
-        </div>
-    </div>
+<div class="card">
+<h2>My Orders</h2>
+<div id="orders"></div>
+</div>
 
 </div>
 
-<!-- Firebase -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    getFirestore,
-    collection,
-    addDoc,
-    query,
-    where,
-    getDocs,
-    orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-// ======================================
-// FIREBASE CONFIG
-// ======================================
+import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore,collection,addDoc,getDocs,query,where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAhZGiLbtJx_hNzndT6yljeu3KaA7CDBMc",
@@ -224,287 +74,117 @@ const firebaseConfig = {
   appId: "1:964998619279:web:1ab149bd4c786d76d0d0fa",
   measurementId: "G-X6MTRZX89X"
 };
-// ======================================
-// INIT
-// ======================================
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-// ======================================
-// PRODUCTS
-// ======================================
+emailjs.init("yZkeLriePU-BYo2WG");
 
-const products = [
-    {
-        name:"Laptop",
-        price:1200,
-        image:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500"
-    },
-    {
-        name:"Smartphone",
-        price:800,
-        image:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500"
-    },
-    {
-        name:"Headphones",
-        price:150,
-        image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500"
-    },
-    {
-        name:"Keyboard",
-        price:80,
-        image:"https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=500"
-    }
+const products=[
+{name:"Chocolate Chip Cookie",price:25},
+{name:"Double Chocolate Cookie",price:30},
+{name:"Matcha Cookie",price:35},
+{name:"Red Velvet Cookie",price:35}
 ];
 
-const productGrid = document.getElementById("productGrid");
-const productSelect = document.getElementById("productSelect");
+let cart=[];
 
-products.forEach(product=>{
-
-    productGrid.innerHTML += `
-        <div class="product">
-            <img src="${product.image}">
-            <h3>${product.name}</h3>
-            <p class="price">$${product.price}</p>
-        </div>
-    `;
-
-    productSelect.innerHTML += `
-        <option value="${product.name}">
-            ${product.name} - $${product.price}
-        </option>
-    `;
+const productsDiv=document.getElementById("products");
+products.forEach(p=>{
+productsDiv.innerHTML+=`
+<div class="card">
+<h3>${p.name}</h3>
+<p>$${p.price}</p>
+<button onclick="addToCart('${p.name}',${p.price})">Add To Cart</button>
+</div>`;
 });
 
-// ======================================
-// AUTH
-// ======================================
-
-window.signup = async ()=>{
-
-    const email =
-        document.getElementById("signupEmail").value;
-
-    const password =
-        document.getElementById("signupPassword").value;
-
-    try{
-
-        await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-        alert("Account created!");
-
-    }catch(error){
-
-        alert(error.message);
-    }
-};
-
-window.login = async ()=>{
-
-    const email =
-        document.getElementById("loginEmail").value;
-
-    const password =
-        document.getElementById("loginPassword").value;
-
-    try{
-
-        await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-        alert("Login successful!");
-
-    }catch(error){
-
-        alert(error.message);
-    }
-};
-
-document.getElementById("logoutBtn")
-.addEventListener("click", async ()=>{
-
-    await signOut(auth);
-
-});
-
-// ======================================
-// AUTH STATE
-// ======================================
-
-onAuthStateChanged(auth, async(user)=>{
-
-    const userInfo =
-        document.getElementById("userInfo");
-
-    const logoutBtn =
-        document.getElementById("logoutBtn");
-
-    if(user){
-
-        userInfo.innerHTML =
-            `Logged in as: <strong>${user.email}</strong>`;
-
-        logoutBtn.classList.remove("hidden");
-
-        loadOrders();
-
-    }else{
-
-        userInfo.innerHTML = "Not Logged In";
-
-        logoutBtn.classList.add("hidden");
-
-        document.getElementById("orderHistory")
-            .innerHTML =
-            "Login to view your orders.";
-    }
-});
-
-// ======================================
-// PLACE ORDER
-// ======================================
-
-window.placeOrder = async ()=>{
-
-    const user = auth.currentUser;
-
-    if(!user){
-
-        alert("Please login first.");
-        return;
-    }
-
-    const customerName =
-        document.getElementById("customerName").value;
-
-    const productName =
-        document.getElementById("productSelect").value;
-
-    const quantity =
-        Number(document.getElementById("quantity").value);
-
-    const message =
-        document.getElementById("message").value;
-
-    const product =
-        products.find(
-            p => p.name === productName
-        );
-
-    const price = product.price;
-
-    try{
-
-        await addDoc(
-            collection(db,"orders"),
-            {
-                userId:user.uid,
-                userEmail:user.email,
-                customerName,
-                productName,
-                quantity,
-                price,
-                message,
-                orderDate:new Date().toISOString()
-            }
-        );
-
-        document.getElementById("orderStatus")
-            .innerText =
-            "✅ Order submitted successfully";
-
-        loadOrders();
-
-    }catch(error){
-
-        alert(error.message);
-    }
-};
-
-// ======================================
-// LOAD USER ORDERS
-// ======================================
-
-async function loadOrders(){
-
-    const user = auth.currentUser;
-
-    if(!user) return;
-
-    const container =
-        document.getElementById("orderHistory");
-
-    container.innerHTML =
-        "Loading orders...";
-
-    try{
-
-        const q = query(
-            collection(db,"orders"),
-            where("userId","==",user.uid),
-            orderBy("orderDate","desc")
-        );
-
-        const snapshot =
-            await getDocs(q);
-
-        if(snapshot.empty){
-
-            container.innerHTML =
-                "No orders found.";
-
-            return;
-        }
-
-        let html = "";
-
-        snapshot.forEach(doc=>{
-
-            const order = doc.data();
-
-            html += `
-            <div class="order-item">
-                <strong>${order.productName}</strong>
-                <br>
-                Customer:
-                ${order.customerName}
-                <br>
-                Quantity:
-                ${order.quantity}
-                <br>
-                Price:
-                $${order.price}
-                <br>
-                Message:
-                ${order.message}
-                <br>
-                Date:
-                ${order.orderDate}
-            </div>
-            `;
-        });
-
-        container.innerHTML = html;
-
-    }catch(error){
-
-        container.innerHTML =
-            error.message;
-    }
+window.addToCart=(name,price)=>{
+const item=cart.find(i=>i.name===name);
+if(item)item.qty++;
+else cart.push({name,price,qty:1});
+renderCart();
 }
 
-</script>
+function renderCart(){
+const div=document.getElementById("cartItems");
+div.innerHTML="";
+let total=0;
+cart.forEach(i=>{
+total+=i.price*i.qty;
+div.innerHTML+=`<div>${i.name} x ${i.qty} - $${i.price*i.qty}</div>`;
+});
+document.getElementById("total").textContent=total;
+}
 
+window.signup=async()=>{
+await createUserWithEmailAndPassword(auth,
+signupEmail.value,signupPassword.value);
+alert("Account created");
+}
+
+window.login=async()=>{
+await signInWithEmailAndPassword(auth,
+loginEmail.value,loginPassword.value);
+}
+
+window.logout=async()=>{
+await signOut(auth);
+}
+
+onAuthStateChanged(auth,async(user)=>{
+userInfo.textContent=user?user.email:"Not logged in";
+if(user) loadOrders();
+});
+
+async function loadOrders(){
+const q=query(collection(db,"orders"),where("userId","==",auth.currentUser.uid));
+const snap=await getDocs(q);
+orders.innerHTML="";
+snap.forEach(doc=>{
+const o=doc.data();
+orders.innerHTML+=`<div>${o.customerName} - $${o.total}</div>`;
+});
+}
+
+window.checkout=async()=>{
+if(!auth.currentUser){alert("Login first");return;}
+if(cart.length===0){alert("Cart empty");return;}
+
+const order={
+userId:auth.currentUser.uid,
+userEmail:auth.currentUser.email,
+customerName:customerName.value,
+customerEmail:customerEmail.value,
+customerAddress:customerAddress.value,
+customerPhone:customerPhone.value,
+items:cart,
+total:cart.reduce((a,b)=>a+b.price*b.qty,0),
+orderDate:new Date().toISOString()
+};
+
+await addDoc(collection(db,"orders"),order);
+
+await emailjs.send(
+"service_vhr6tm8",
+"template_0o7wsq6",
+{
+customer_name:order.customerName,
+customer_email:order.customerEmail,
+customer_address:order.customerAddress,
+customer_phone:order.customerPhone,
+items:order.items.map(i=>`${i.name} x${i.qty}`).join(", "),
+total:order.total,
+order_date:order.orderDate
+}
+);
+
+alert("Order placed!");
+cart=[];
+renderCart();
+loadOrders();
+};
+</script>
 </body>
 </html>
